@@ -1,0 +1,6 @@
+syntax: glob
+
+.pydevproject
+.sconsign.dblite
+amalgam
+*.o
