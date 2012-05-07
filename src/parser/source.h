@@ -12,9 +12,10 @@
 
 #include <fstream>
 #include <map>
+#include <sstream>
 #include <tuple>
 
-namespace fusion {
+namespace amalgam {
 namespace parser {
 
 /** Associates all the aspects of a source file together. */
@@ -24,6 +25,9 @@ class source {
 
     /** The type that associates file index with line number and column information. */
     typedef std::map<uint64_t, location_t > location_map_t;
+
+    /** The type that keeps track of the input stream. */
+    typedef std::unique_ptr<std::istream> stream_ptr_t;
 
     location_map_t loc;
 
@@ -36,26 +40,33 @@ class source {
     /** The current column. */
     uint32_t col;
 
-    /** An file stream object for source input. */
-    std::ifstream input;
+    /** An stream object for source input. */
+    stream_ptr_t input;
     
 public:
-    ~source() {
-       input.close();
-    }
+    source():line(1), col(1) {}
 
     /** Opens the source file.
      *
      * @param filename: The filename to open. Must exist! */
-    void open(string filename) {
-       input.open(filename);
+    void open(string _filename) {
+       input = stream_ptr_t(new std::ifstream(_filename));
+       filename = _filename;
+    }
+
+    /** Converts the given buffer to a stream and sets it as the input.
+     *
+     * @param filename: The string containing the source buffer. */
+    void load(string buffer) {
+       input = stream_ptr_t(new std::stringstream(buffer, std::stringstream::in));
+       filename = "<string>";
     }
 
     /** Sets a mark at the current location and returns the location.
      *
      * @returns: A 64-bit value indicating where we are in the file. */
     auto mark() -> uint64_t {
-       auto pos = input.tellg();
+       auto pos = input->tellg();
 
        loc[pos] = std::make_tuple(line, col);
 
@@ -83,7 +94,7 @@ public:
     auto consume() -> std::tuple<bool, string::value_type> {
        string::value_type c;
 
-       if (!input.get(c)) {
+       if (!input->get(c)) {
           return std::make_tuple(false, c);
        }
 
@@ -103,7 +114,7 @@ public:
      * @returns: If the EOF is reached, this function returns istream::traits::eof(), otherwise it
      * returns the next character that would be read. */
     auto peek() -> int {
-       return input.peek();
+       return input->peek();
     }
 
     /** Resets the input stream to an earlier spot. This spot must have been recorded by using "mark()".
@@ -117,7 +128,7 @@ public:
           return false;
        }
 
-       input.seekg(pos);
+       input->seekg(pos);
 
        std::tie(line, col) = loc[pos];
 

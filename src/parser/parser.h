@@ -12,7 +12,7 @@
 
 #include "source.h"
 
-namespace fusion {
+namespace amalgam {
 namespace parser {
 
 /** Parses fusion code into ast objects. */
@@ -68,7 +68,7 @@ class parser {
       if (number.size() > 0) {
          auto end = ctx.s.mark();
 
-         auto node = ast_ptr_t();
+         auto node = make_ast();
          node->type = node_type::literal_int;
          node->data = number;
          node->start_pos = start;
@@ -105,12 +105,13 @@ class parser {
       ctx.parsed = true;
    }
 
-   void parse() {
+public:
+   void parse(std::string buffer) {
       context ctx;
 
+      ctx.s.load(buffer);
       start(ctx, endmark);
    }
-    
 };
     
 

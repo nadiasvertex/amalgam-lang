@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <string>
 
-namespace fusion {
+namespace amalgam {
 namespace parser {
 
 /** The type for strings in the parser. */

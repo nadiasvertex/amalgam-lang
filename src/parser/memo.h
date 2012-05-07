@@ -12,7 +12,7 @@
 
 #include "ast.h"
 
-namespace fusion {
+namespace amalgam {
 namespace parser {
 
 /** Stores memoized tokens matched from the source data. */

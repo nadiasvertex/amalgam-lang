@@ -17,7 +17,10 @@ int main(int argc, char **argv) {
         
         // If we got EOF, stop looping.
         if (nullptr == input) break;
-            
+
+        amalgam::parser::parser p;
+
+        p.parse(input);
     }
     
     return 0;

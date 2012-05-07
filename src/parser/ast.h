@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-namespace fusion {
+namespace amalgam {
 namespace parser {
 
 enum class node_type {
@@ -42,7 +42,9 @@ struct ast {
     ast_ptr_t alt;
 };
 
-   
+ast_ptr_t make_ast() {
+   return ast_ptr_t(new ast());
+}
 
 } // end parser namespace
 } // end fusion namespace

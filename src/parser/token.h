@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-namespace fusion {
+namespace amalgam {
 namespace parser {
 
 /** Stores token information. */
