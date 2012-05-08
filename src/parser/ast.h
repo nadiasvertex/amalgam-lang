@@ -23,7 +23,11 @@ enum class node_type {
 };
 
 struct ast;
+/** The type for shared pointers to AST nodes. */
 typedef std::shared_ptr<ast> ast_ptr_t;
+
+/** The type for lists of AST nodes. */
+typedef std::vector<ast_ptr_t> ast_list_t;
 
 /** Stores token information. */
 struct ast {
@@ -40,7 +44,7 @@ struct ast {
     string data;
 
     /** List of children (if any) */
-    std::vector<ast_ptr_t> children;
+    ast_list_t children;
 };
 
 ast_ptr_t make_ast() {
@@ -48,8 +52,7 @@ ast_ptr_t make_ast() {
 }
 
 } // end parser namespace
-} // end fusion namespace
-
+} // end amalgam namespace
 
 
 #endif /* AST_H_ */

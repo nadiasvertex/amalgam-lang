@@ -8,64 +8,12 @@
 #ifndef RULES_H_
 #define RULES_H_
 
-#include <vector>
-
-#include "pegtl.hh"
-#include "ast.h"
+#include "actions.h"
 
 namespace amalgam {
 namespace parser {
 
 using namespace pegtl;
-
-/**
- * This type represents a stack of ast trees. As we
- * recognize input, nodes will be pushed onto
- * the stack. Some nodes will pop items off of the
- * stack and internalize them, then replace the top
- * of the stack with itself.
- */
-typedef std::vector<ast_ptr_t> ast_stack_t;
-
-template< node_type nt >
-struct push_node : action_base< push_node< nt > > {
-    static void apply( const std::string &s, ast_stack_t &t) {
-        auto n = make_ast();
-        
-        n->type = nt;
-        n->data = s;
-        
-        switch(nt) {
-            default:             
-                t.push_back( n );
-                break;
-                
-            case node_type::literal_int:                
-                if (t.size()>0 && t.back()->type == node_type::op) {
-                    // If the item on the top of the stack is an operator,
-                    // make ourselves a child of the operator.
-                    t.back()->children.push_back(n);
-                } else {
-                    // Otherwise, push ourselves onto the stack.
-                    t.push_back( n );
-                }
-                break;
-                
-            case node_type::op:
-                if (t.size()>0) {
-                    // No matter what the item on the top of the stack is, make
-                    // it a child.
-                    auto top = t.back();
-                    
-                    t.pop_back();
-                    n->children.push_back(top);                    
-                } 
-                
-                t.push_back( n );
-            break;                
-        } // end switch
-    } // end apply
-};
 
 /** 
  * A literal integer is: + / - (0-9)+ (a-zA-Z)*
@@ -75,25 +23,35 @@ struct push_node : action_base< push_node< nt > > {
  * Specifier
  * 
  */
-struct literal_integer : seq< opt< one< '+', '-' > >, plus< digit >, opt< plus< alpha > > > {};
+struct literal_integer : seq<opt<one<'+', '-'> >, plus<digit>, opt<plus<alpha> > > {
+};
 
-struct push_integer : pad< ifapply< literal_integer, push_node< node_type::literal_int > >, space > {};
+struct push_integer : pad<
+      ifapply<literal_integer, push_node<node_type::literal_int> >, space> {
+};
 
 struct expr;
 
-struct expr_atom : sor< push_integer, seq< one<'('>, expr, one<')'> > > {}; 
+struct expr_atom : sor<push_integer, seq<one<'('>, expr, one<')'> > > {
+};
 
-struct literal_op : one< '+', '-', '*', '/', '&', '|', '^'> {};
+struct literal_op : one<'+', '-', '*', '/', '&', '|', '^'> {
+};
 
-struct push_op : pad< ifapply< literal_op, push_node< node_type::op > >, space > {};
+struct push_op : pad<ifapply<literal_op, push_node<node_type::op> >, space> {
+};
 
-struct expr : list < expr_atom, push_op > {} ; 
+struct expr : list<expr_atom, push_op> {
+};
 
-struct grammar : until< eol, expr > {};
+struct expr_list : ifapply<until<eol, expr>, sweep_expression_tree> {
+};
+
+struct grammar : expr_list {
+};
 
 } // end parser namespace
 } // end amalgam namespace
-
 
 #endif /* RULES_H_ */
 

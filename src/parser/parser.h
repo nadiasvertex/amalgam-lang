@@ -9,6 +9,7 @@
 #define PARSER_H_
 
 #include "rules.h"
+#include "module.h"
 
 namespace amalgam {
 namespace parser {
@@ -34,8 +35,11 @@ public:
 
    void
    parse(const std::string& s) {
+      auto m = module_ptr_t(new module());
       ast_stack_t t;
-      pegtl::basic_parse_string < grammar > (s, t);
+
+      pegtl::basic_parse_string < grammar > (s, t, m);
+
       std::cout << "parsed " << t.size() << " expression trees." << std::endl;
 
       for (auto n : t) {
@@ -43,6 +47,9 @@ public:
 
          print_children(n, 1);
       }
+
+
+
    }
 };
 
