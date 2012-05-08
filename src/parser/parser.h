@@ -17,39 +17,17 @@ namespace parser {
 class parser {
 
 public:
-   void print_children(ast_ptr_t n, int indent) {
-      auto indent_str = std::string(indent, ' ');
-      for (auto c : n->children) {
-         std::cout
-            << indent_str
-            << "|"
-            << (int) (c->type)
-            << ": '"
-            << c->data
-            << "'"
-            << std::endl;
 
-         print_children(c, indent+1);
-      }
-   }
-
-   void
+   module_ptr_t
    parse(const std::string& s) {
-      auto m = module_ptr_t(new module());
+      auto m = module_ptr_t(new module("__main__"));
       ast_stack_t t;
 
       pegtl::basic_parse_string < grammar > (s, t, m);
 
-      std::cout << "parsed " << t.size() << " expression trees." << std::endl;
+      m->dump();
 
-      for (auto n : t) {
-         std::cout << (int) (n->type) << ": '" << n->data << "'" << std::endl;
-
-         print_children(n, 1);
-      }
-
-
-
+      return m;
    }
 };
 

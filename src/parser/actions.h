@@ -81,7 +81,8 @@ struct sweep_expression_tree : action_base<sweep_expression_tree> {
       // lists.
 
       if (t.size() > 0) {
-         m->get_current_method()->add_expression_tree(t.back());
+         auto tree = t.back();
+         m->get_current_method()->add_expression_tree(tree);
          t.pop_back();
       }
 

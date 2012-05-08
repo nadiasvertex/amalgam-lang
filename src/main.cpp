@@ -8,6 +8,7 @@
 #include <readline/readline.h>
 
 #include "parser/parser.h"
+#include "codegen/generator.h"
 
 int main(int argc, char **argv) {
 
@@ -20,7 +21,11 @@ int main(int argc, char **argv) {
 
         amalgam::parser::parser p;
 
-        p.parse(input);
+        auto module = p.parse(input);
+
+        amalgam::codegen::generator g;
+
+        g.generate(module);
     }
     
     return 0;

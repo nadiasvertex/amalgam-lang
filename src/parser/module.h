@@ -40,8 +40,9 @@ class module {
    method_ptr_t current_method;
 
 public:
-   module() {
+   module(const std::string &_name):name(_name) {
       add_method(method_ptr_t(new method("__default__")));
+      push_current_method("__default__");
    }
 
    /** This should be used when entering a new method in the
@@ -86,6 +87,24 @@ public:
    auto get_method(const std::string &name) -> method_ptr_t {
       return methods[name];
    }
+
+   //=====----------------------------------------------------------------------======//
+   //      Parser Debugging and Instrumentation
+   //=====----------------------------------------------------------------------======//
+
+   void
+   dump() {
+      std::cout << "Module: " << name << std::endl;
+
+      for (auto it : methods) {
+         auto m = it.second;
+         std::cout << "Method: " << m->get_name()
+                   << std::endl;
+
+         m->dump();
+      }
+   }
+
 
 };
 
