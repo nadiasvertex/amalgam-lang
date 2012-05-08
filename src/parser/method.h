@@ -50,6 +50,11 @@ public:
       expression_list.push_back(node);
    }
 
+   /** Gets the expression tree list for iteration purposes. */
+   auto get_expression_tree_list() -> const ast_list_t & {
+      return expression_list;
+   }
+
    //=====----------------------------------------------------------------------======//
    //      Parser Debugging and Instrumentation
    //=====----------------------------------------------------------------------======//

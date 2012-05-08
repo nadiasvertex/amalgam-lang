@@ -88,6 +88,11 @@ public:
       return methods[name];
    }
 
+   /** Used to be able to iterate over the collection of methods. */
+   auto get_method_map() -> const method_map_t & {
+      return methods;
+   }
+
    //=====----------------------------------------------------------------------======//
    //      Parser Debugging and Instrumentation
    //=====----------------------------------------------------------------------======//
