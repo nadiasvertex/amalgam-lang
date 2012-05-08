@@ -17,7 +17,8 @@ namespace parser {
 
 enum class node_type {
     literal_int,
-    identifier
+    identifier,
+    op
 };
 
 struct ast;

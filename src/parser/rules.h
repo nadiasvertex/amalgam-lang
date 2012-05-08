@@ -50,13 +50,17 @@ struct push_node : action_base< push_node< nt > > {
  */
 struct literal_integer : seq< opt< one< '+', '-' > >, plus< digit >, opt< plus< alpha > > > {};
 
+struct push_integer : pad< ifapply< literal_integer, push_node< node_type::literal_int > >, space > {};
+
 struct expr;
 
-struct expr_atom : sor< literal_integer, seq< one<'('>, expr, one<')'> > > {}; 
+struct expr_atom : sor< push_integer, seq< one<'('>, expr, one<')'> > > {}; 
 
-struct expr_op : one< '+', '-', '*', '/', '&', '|', '^'> {};
+struct literal_op : one< '+', '-', '*', '/', '&', '|', '^'> {};
 
-struct expr : plus < sor< expr_atom, expr_op > > {} ; 
+struct push_op : pad< ifapply< literal_op, push_node< node_type::op > >, space > {};
+
+struct expr : list < expr_atom, push_op > {} ; 
 
 struct grammar : until< eol, expr > {};
 

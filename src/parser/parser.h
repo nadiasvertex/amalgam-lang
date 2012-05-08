@@ -23,6 +23,10 @@ public:
       pegtl::basic_parse_string< grammar >(s, t);
 
       std::cout << "parsed " << t.size() << " expression trees." << std::endl;
+
+      for(auto n : t) {
+         std::cout << (int)n->type << ": '" << n->data << "'" << std::endl;
+      }
    }
 };
 
