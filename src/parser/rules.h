@@ -35,10 +35,37 @@ struct push_node : action_base< push_node< nt > > {
         n->type = nt;
         n->data = s;
         
-        t.push_back( n );
-    }
+        switch(nt) {
+            default:             
+                t.push_back( n );
+                break;
+                
+            case node_type::literal_int:                
+                if (t.size()>0 && t.back()->type == node_type::op) {
+                    // If the item on the top of the stack is an operator,
+                    // make ourselves a child of the operator.
+                    t.back()->children.push_back(n);
+                } else {
+                    // Otherwise, push ourselves onto the stack.
+                    t.push_back( n );
+                }
+                break;
+                
+            case node_type::op:
+                if (t.size()>0) {
+                    // No matter what the item on the top of the stack is, make
+                    // it a child.
+                    auto top = t.back();
+                    
+                    t.pop_back();
+                    n->children.push_back(top);                    
+                } 
+                
+                t.push_back( n );
+            break;                
+        } // end switch
+    } // end apply
 };
-
 
 /** 
  * A literal integer is: + / - (0-9)+ (a-zA-Z)*
@@ -69,3 +96,4 @@ struct grammar : until< eol, expr > {};
 
 
 #endif /* RULES_H_ */
+

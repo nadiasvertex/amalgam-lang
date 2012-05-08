@@ -9,6 +9,7 @@
 #define AST_H_
 
 #include <memory>
+#include <vector>
 
 #include "types.h"
 
@@ -36,12 +37,10 @@ struct ast {
     uint64_t end_pos;
                 
     /** Associated string data (if any) */
-    string data; 
-    
-    /** If there is any alternate data that can
-     * be parsed starting at this same position, then
-     * we point to it here. */
-    ast_ptr_t alt;
+    string data;
+
+    /** List of children (if any) */
+    std::vector<ast_ptr_t> children;
 };
 
 ast_ptr_t make_ast() {
