@@ -40,9 +40,16 @@ class module {
    method_ptr_t current_method;
 
 public:
-   module(const std::string &_name):name(_name) {
+   module(const std::string &_name) :
+         name(_name) {
       add_method(method_ptr_t(new method("__default__")));
       push_current_method("__default__");
+   }
+
+   /** Gets the name of the module */
+   auto
+   get_name() -> const std::string & {
+      return name;
    }
 
    /** This should be used when entering a new method in the
@@ -50,7 +57,8 @@ public:
     * nested method stack, and then sets the current method
     * to the method with the given name.
     */
-   void push_current_method(const std::string &name) {
+   void
+   push_current_method(const std::string &name) {
       nested_method_stack.push_back(current_method);
       current_method = methods[name];
    }
@@ -60,7 +68,8 @@ public:
     * is at the top of the nested method stack, and then pops
     * the stack.
     */
-   void pop_current_method() {
+   void
+   pop_current_method() {
       current_method = nested_method_stack.back();
       nested_method_stack.pop_back();
    }
@@ -68,28 +77,33 @@ public:
    /** Provides a handle to the current method. This always points
     * to something.
     */
-   method_ptr_t get_current_method() {
+   method_ptr_t
+   get_current_method() {
       return current_method;
    }
 
    /** Adds a method to the module. */
-   void add_method(method_ptr_t m) {
+   void
+   add_method(method_ptr_t m) {
       methods[m->get_name()] = m;
    }
 
    /** Indicates if the module has the named method. */
-   auto has_method(const std::string &name) -> bool {
+   auto
+   has_method(const std::string &name) -> bool {
       return methods.find(name) != methods.end();
    }
 
    /** Gets a handle to the named method. If the method does not
     * exist, this code will fail. */
-   auto get_method(const std::string &name) -> method_ptr_t {
+   auto
+   get_method(const std::string &name) -> method_ptr_t {
       return methods[name];
    }
 
    /** Used to be able to iterate over the collection of methods. */
-   auto get_method_map() -> const method_map_t & {
+   auto
+   get_method_map() -> const method_map_t & {
       return methods;
    }
 
@@ -103,13 +117,11 @@ public:
 
       for (auto it : methods) {
          auto m = it.second;
-         std::cout << "Method: " << m->get_name()
-                   << std::endl;
+         std::cout << "Method: " << m->get_name() << std::endl;
 
          m->dump();
       }
    }
-
 
 };
 
