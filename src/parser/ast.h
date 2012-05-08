@@ -16,7 +16,8 @@ namespace amalgam {
 namespace parser {
 
 enum class node_type {
-    literal_int
+    literal_int,
+    identifier
 };
 
 struct ast;
