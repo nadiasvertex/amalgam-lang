@@ -26,13 +26,20 @@ using namespace pegtl;
 struct literal_integer : seq<opt<one<'+', '-'> >, plus<digit>, opt<plus<alpha> > > {
 };
 
+/** Matches a literal_integer, and if successful, pushes it on the expression stack. Also
+ * provides for space padding. */
 struct push_integer : pad<
       ifapply<literal_integer, push_node<node_type::literal_int> >, space> {
 };
 
 struct expr;
 
-struct expr_atom : sor<push_integer, seq<one<'('>, expr, one<')'> > > {
+struct push_group : pad<
+    ifapply<seq<one<'('>, expr, one<')'> >, push_node<node_type::group> >, space> {};
+
+/** An expression atom is one atomic unit of expression. This could be a single
+ * literal, or a parenthetical expression. */
+struct expr_atom : sor<push_integer, push_group > {
 };
 
 struct literal_op : one<'+', '-', '*', '/', '&', '|', '^'> {

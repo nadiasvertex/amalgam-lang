@@ -41,34 +41,39 @@ template<node_type nt>
          n->data = s;
 
          switch (nt) {
-         default:
-            t.push_back(n);
-            break;
-
-         case node_type::literal_int:
-            if (t.size() > 0 && t.back()->type == node_type::op) {
-               // If the item on the top of the stack is an operator,
-               // make ourselves a child of the operator.
-               t.back()->children.push_back(n);
-            }
-            else {
-               // Otherwise, push ourselves onto the stack.
+            default:
                t.push_back(n);
-            }
-            break;
+               break;
 
-         case node_type::op:
-            if (t.size() > 0) {
-               // No matter what the item on the top of the stack is, make
-               // it a child.
-               auto top = t.back();
+            case node_type::literal_int:
+               if (t.size() > 0
+                   && (t.back()->type == node_type::op
+                       || t.back()->type == node_type::group)) {
+                  // If the item on the top of the stack is an operator,
+                  // make ourselves a child of the operator.
+                  t.back()->children.push_back(n);
+               } else {
+                  // Otherwise, push ourselves onto the stack.
+                  t.push_back(n);
+               }
+               break;
 
-               t.pop_back();
-               n->children.push_back(top);
-            }
+            case node_type::op:
+               if (t.size() > 0) {
+                  // No matter what the item on the top of the stack is, make
+                  // it a child.
+                  auto top = t.back();
 
-            t.push_back(n);
-            break;
+                  t.pop_back();
+                  n->children.push_back(top);
+               }
+
+               t.push_back(n);
+               break;
+
+            case node_type::group:
+               t.push_back(n);
+               break;
          } // end switch
       } // end apply
    };
@@ -88,12 +93,14 @@ struct sweep_expression_tree : action_base<sweep_expression_tree> {
 
       if (t.size() > 0) {
          std::cout
-               << "internal warning: there is unconsumed input on the parse stack at:"
-               << std::endl << s << std::endl;
+         << "internal warning: there is unconsumed input on the parse stack at:"
+         << std::endl
+         << s
+         << std::endl;
 
          std::cout
-               << "internal warning: these expression trees are being DISCARDED."
-               << std::endl;
+         << "internal warning: these expression trees are being DISCARDED."
+         << std::endl;
          t.clear();
       }
    }

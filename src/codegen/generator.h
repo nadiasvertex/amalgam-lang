@@ -64,6 +64,8 @@ class generator {
          return constant_int(n);
       case parser::node_type::op:
          return bin_op(n);
+      case parser::node_type::group:
+         return get_value(n->children[0]);
       }
    }
 
