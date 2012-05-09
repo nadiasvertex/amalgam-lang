@@ -2,7 +2,7 @@
  * actions.h
  *
  *  Created on: May 8, 2012
- *      Author: cnelson
+ *      Author: Christopher Nelson
  */
 
 #ifndef ACTIONS_H_
@@ -45,63 +45,54 @@ template<node_type nt>
                t.push_back(n);
                break;
 
-            case node_type::literal_int:
-               if (t.size() > 0
-                   && (t.back()->type == node_type::op
-                       || t.back()->type == node_type::group)) {
-                  // If the item on the top of the stack is an operator,
-                  // make ourselves a child of the operator.
-                  t.back()->children.push_back(n);
-               } else {
-                  // Otherwise, push ourselves onto the stack.
-                  t.push_back(n);
-               }
-               break;
-
             case node_type::op:
-               if (t.size() > 0) {
-                  // No matter what the item on the top of the stack is, make
-                  // it a child.
+               if (t.size() > 0 && t.back()->type == node_type::literal_int) {
+                  // If the top of the stack is a literal or identifier, swap places with it.
                   auto top = t.back();
 
                   t.pop_back();
-                  n->children.push_back(top);
+                  t.push_back(n);
+                  t.push_back(top);
+               } else {
+                  t.push_back(n);
                }
-
-               t.push_back(n);
-               break;
-
-            case node_type::group:
-               t.push_back(n);
                break;
          } // end switch
       } // end apply
    };
 
 struct sweep_expression_tree : action_base<sweep_expression_tree> {
+   static auto
+   to_tree(ast_stack_t::iterator& it) -> ast_ptr_t {
+      auto node = *it;
+
+      switch (node->type) {
+         default:
+            break;
+
+         case node_type::op:
+            node->children.push_back(to_tree(++it));
+            node->children.push_back(to_tree(++it));
+            break;
+      }
+
+      return node;
+   }
+
    static void
-   apply(const std::string &s, ast_stack_t &t, module_ptr_t m) {
+   apply(const std::string& s, ast_stack_t& t, module_ptr_t m) {
       // We are at the end of the expression list specified in the file. We sweep
       // the contents of the top of the stack into the current method's expression
       // lists.
-
       if (t.size() > 0) {
-         auto tree = t.back();
-         m->get_current_method()->add_expression_tree(tree);
-         t.pop_back();
-      }
+         std::cout << "trace: parse stack:" << std::endl;
+         for (auto n : t) {
+            std::cout << (int) (n->type) << ": " << n->data << std::endl;
+         }
 
-      if (t.size() > 0) {
-         std::cout
-         << "internal warning: there is unconsumed input on the parse stack at:"
-         << std::endl
-         << s
-         << std::endl;
-
-         std::cout
-         << "internal warning: these expression trees are being DISCARDED."
-         << std::endl;
-         t.clear();
+         // sweep the stack recursively
+         auto it = t.begin();
+         m->get_current_method()->add_expression_tree(to_tree(it));
       }
    }
 };

@@ -35,7 +35,7 @@ struct push_integer : pad<
 struct expr;
 
 struct push_group : pad<
-    ifapply<seq<one<'('>, expr, one<')'> >, push_node<node_type::group> >, space> {};
+    seq<one<'('>, expr, one<')'> >, space> {};
 
 /** An expression atom is one atomic unit of expression. This could be a single
  * literal, or a parenthetical expression. */
