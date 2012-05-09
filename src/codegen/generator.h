@@ -8,6 +8,9 @@
 #ifndef GENERATOR_H_
 #define GENERATOR_H_
 
+#include <map>
+#include <functional>
+
 #include "llvm/DerivedTypes.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/JIT.h"
@@ -20,11 +23,16 @@
 #include "llvm/Target/TargetData.h"
 
 #include "../parser/module.h"
+#include "../util/switch.h"
 
 namespace amalgam {
 namespace codegen {
 
 class generator {
+
+   typedef std::map<std::string, std::function<llvm::Value *
+   (llvm::Value *, llvm::Value *)>> op_map_t;
+
    llvm::LLVMContext &ctx;
    llvm::Module *cm;
 
@@ -34,10 +42,12 @@ class generator {
 
    llvm::Value *zero_constant;
 
+   op_map_t op_map;
+
    auto
    constant_int(parser::ast_ptr_t i) -> llvm::Value * {
       return llvm::ConstantInt::get(ctx,
-            llvm::APInt(64, std::stoi(i->data), true));
+                                    llvm::APInt(64, std::stoi(i->data), true));
    }
 
    auto
@@ -45,40 +55,56 @@ class generator {
       auto left = get_value(op->children[0]);
       auto right = get_value(op->children[1]);
 
-      switch (op->data[0]) {
-      case '+':
-         return builder.CreateAdd(left, right, "addtmp");
-      case '-':
-         return builder.CreateSub(left, right, "subtmp");
-      case '*':
-         return builder.CreateMul(left, right, "multmp");
-      case '/':
-         return builder.CreateSDiv(left, right, "divtmp");
+      if (left==nullptr || right==nullptr) {
+         std::cout << "internal error: binary operation expected two operands, but did not find them." << std::endl;
+
+         return nullptr;
       }
+
+      auto it = op_map.find(op->data);
+      if (it==op_map.end()) {
+         std::cout << "internal error: no generator found for '" << op->data << "'." << std::endl;
+
+         return nullptr;
+      }
+
+      // Get the operation generator lambda.
+      auto op_gen = it->second;
+
+      // Call the operation generator.
+      return op_gen(left,right);
    }
 
    auto
    get_value(parser::ast_ptr_t n) -> llvm::Value * {
       switch (n->type) {
-      case parser::node_type::literal_int:
-         return constant_int(n);
-      case parser::node_type::op:
-         return bin_op(n);
-      case parser::node_type::group:
-         return get_value(n->children[0]);
+         default:
+            std::cout << "internal error: no processor found for node type '" << (int)n->type << "':'" << n->data << "'" << std::endl;
+            return nullptr;
+
+         case parser::node_type::literal_int:
+            return constant_int(n);
+         case parser::node_type::op:
+            return bin_op(n);
+         case parser::node_type::group:
+            return get_value(n->children[0]);
       }
    }
 
    void
    method(parser::method_ptr_t m) {
       auto method_type = llvm::FunctionType::get(llvm::Type::getInt64Ty(ctx),
-            std::vector<llvm::Type *>(), false);
+                                                 std::vector<llvm::Type *>(),
+                                                 false);
 
       auto method_code = llvm::Function::Create(method_type,
-            llvm::Function::ExternalLinkage, m->get_name(), cm);
+                                                llvm::Function::ExternalLinkage,
+                                                m->get_name(),
+                                                cm);
 
-      auto method_entry_bb = llvm::BasicBlock::Create(ctx, "entry",
-            method_code);
+      auto method_entry_bb = llvm::BasicBlock::Create(ctx,
+                                                      "entry",
+                                                      method_code);
 
       builder.SetInsertPoint(method_entry_bb);
 
@@ -101,10 +127,37 @@ class generator {
 
 public:
    generator() :
-         ctx(llvm::getGlobalContext()), builder(ctx) {
+            ctx(llvm::getGlobalContext()), builder(ctx) {
 
       llvm::InitializeNativeTarget();
       zero_constant = llvm::ConstantInt::get(ctx, llvm::APInt(64, 0, true));
+
+      // ===------------- Initialize the binary operation generator -----------------=== //
+
+#define BINOPGEN(op) [this](llvm::Value *left, llvm::Value *right) { return builder.Create##op (left,right, #op"tmp"); }
+
+      op_map = {
+         // Simple integer
+         { "+",  BINOPGEN(Add)  },
+         { "-",  BINOPGEN(Sub)  },
+         { "*",  BINOPGEN(Mul)  },
+         { "/",  BINOPGEN(SDiv) },
+         { "%",  BINOPGEN(SRem) },
+         { "&",  BINOPGEN(And)  },
+         { "|",  BINOPGEN(Or)   },
+         { "^",  BINOPGEN(Xor)  },
+         { "<<", BINOPGEN(Shl)  },
+         { ">>", BINOPGEN(LShr) },
+         // Comparison
+         { ">=", BINOPGEN(ICmpSGE) },
+         { "<=", BINOPGEN(ICmpSLE) },
+         { "==", BINOPGEN(ICmpEQ)  },
+         { "!=", BINOPGEN(ICmpNE)  },
+         { "<",  BINOPGEN(ICmpSLT) },
+         { ">",  BINOPGEN(ICmpSGT) }
+      };
+
+#undef BINOPGEN
    }
 
    void
@@ -128,16 +181,19 @@ public:
       ee = llvm::EngineBuilder(cm).setErrorStr(&error_str).create();
 
       if (!ee) {
-         std::cout << "internal error: unable to create JIT engine: "
-               << error_str << std::endl;
+         std::cout
+         << "internal error: unable to create JIT engine: "
+         << error_str
+         << std::endl;
          return;
       }
 
       auto entry_point = cm->getFunction("__default__");
 
       if (!entry_point) {
-         std::cout << "internal error: unable to locate function '__default__'"
-               << std::endl;
+         std::cout
+         << "internal error: unable to locate function '__default__'"
+         << std::endl;
          return;
       }
 
@@ -149,11 +205,12 @@ public:
       }
 
       auto call = (long long
-      (*)())fptr;
+               (*)())fptr;
 
-std      ::cout << "[ " << call() << std::endl;
+      std ::cout << "[ " << call() << std::endl;
    }
-};
+}
+;
 // end generator class
 
 }// end codegen namespace

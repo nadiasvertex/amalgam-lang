@@ -42,7 +42,9 @@ struct push_group : pad<
 struct expr_atom : sor<push_integer, push_group > {
 };
 
-struct literal_op : one<'+', '-', '*', '/', '&', '|', '^'> {
+struct literal_op : plus< one<'+', '-', '*', '/', '&', '|', '^', '=', '<', '>', 
+                         ':', ';', '[', ']', '{', '}', ',', '.', '?', '\\', 
+                         '~', '!', '@', '#', '$', '%' > > {
 };
 
 struct push_op : pad<ifapply<literal_op, push_node<node_type::op> >, space> {
