@@ -127,7 +127,7 @@ public:
    /** Adds a type annotation to the module. */
    void
    add_type(type_annotation::ptr_t m) {
-      methods[m->get_name()] = m;
+      types[m->name] = m;
    }
 
    /** Indicates if the module has the named type. */

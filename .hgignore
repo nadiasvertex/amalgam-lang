@@ -4,3 +4,4 @@ syntax: glob
 .sconsign.dblite
 amalgam
 *.o
+*.pyc
