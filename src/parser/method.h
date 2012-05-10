@@ -50,7 +50,12 @@ public:
       return name;
    }
 
-   /** Adds a completely processed expression tree to the list
+   //=====----------------------------------------------------------------------======//
+   //      Expression Trees
+   //=====----------------------------------------------------------------------======//
+
+
+   /** Adds a completely parsed expression tree to the list
     * of expressions this method must process. */
    void
    add_expression_tree(ast_ptr_t node) {
@@ -60,6 +65,17 @@ public:
    /** Gets the expression tree list for iteration purposes. */
    auto get_expression_tree_list() -> const ast_list_t & {
       return expression_list;
+   }
+
+   //=====----------------------------------------------------------------------======//
+   //      Variables
+   //=====----------------------------------------------------------------------======//
+
+
+   /** Adds a variable to this method. This is generally called by
+    * the verifier during processing of the expression list.*/
+   void add_variable(string name, type_annotation::ptr_t t) {
+      vars[name] = t;
    }
 
    //=====----------------------------------------------------------------------======//

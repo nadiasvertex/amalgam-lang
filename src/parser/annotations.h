@@ -51,7 +51,7 @@ struct type_annotation : public annotation {
     * of types.
     */
    enum class type_id {
-      integer, floating_point, string, astruct, tuple, dict, method, interface
+      integer, floating_point, string, astruct, tuple, dict, method, interface, generic
    };
 
    /** The name of the type. */

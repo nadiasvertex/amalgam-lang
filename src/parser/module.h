@@ -39,6 +39,9 @@ class module {
     * effort at any time. There is always a current method. */
    method_ptr_t current_method;
 
+   /** The map of type names to type annotations. */
+   type_annotation::map_t types;
+
 public:
    module(const string &_name) :
          name(_name) {
@@ -51,6 +54,11 @@ public:
    get_name() -> const std::string & {
       return name;
    }
+
+   //=====----------------------------------------------------------------------======//
+   //      Methods
+   //=====----------------------------------------------------------------------======//
+
 
    /** This should be used when entering a new method in the
     * parse stream. Pushes the old current method onto the
@@ -90,14 +98,14 @@ public:
 
    /** Indicates if the module has the named method. */
    auto
-   has_method(const std::string &name) -> bool {
+   has_method(const string &name) -> bool {
       return methods.find(name) != methods.end();
    }
 
    /** Gets a handle to the named method. If the method does not
     * exist, this code will fail. */
    auto
-   get_method(const std::string &name) -> method_ptr_t {
+   get_method(const string &name) -> method_ptr_t {
       return methods[name];
    }
 
@@ -105,6 +113,32 @@ public:
    auto
    get_method_map() -> const method_map_t & {
       return methods;
+   }
+
+   //=====----------------------------------------------------------------------======//
+   //      Type Management
+   //=====----------------------------------------------------------------------======//
+
+   // Modules are the repository of all type information. If the module does not know
+   // about the type, then a variable cannot assume that type. When an import statement
+   // is encountered, the local module will process the import and swallow the types
+   // stored in that module.
+
+   /** Adds a type annotation to the module. */
+   void
+   add_type(type_annotation::ptr_t m) {
+      methods[m->get_name()] = m;
+   }
+
+   /** Indicates if the module has the named type. */
+   auto
+   has_type(const string &name) -> bool {
+      return types.find(name) != types.end();
+   }
+
+   auto
+   get_type(const string &name) ->  type_annotation::ptr_t {
+      return types[name];
    }
 
    //=====----------------------------------------------------------------------======//
