@@ -10,6 +10,7 @@
 
 #include <map>
 
+#include "annotations.h"
 #include "ast.h"
 
 namespace amalgam {
@@ -27,10 +28,16 @@ typedef std::map<std::string, method_ptr_t> method_map_t;
 
 class method {
    /** The name of the method. */
-   std::string name;
+   string name;
 
    /** The list of expressions to evaluate in this method. */
    ast_list_t expression_list;
+
+   /** The type of the method. */
+   method_type_annotation type;
+
+   /** The list of variables declared in this method. */
+   type_annotation::map_t vars;
 
 public:
    method(const std::string _name) :

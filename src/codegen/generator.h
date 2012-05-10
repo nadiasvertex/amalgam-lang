@@ -23,15 +23,15 @@
 #include "llvm/Target/TargetData.h"
 
 #include "../parser/module.h"
-#include "../util/switch.h"
 
 namespace amalgam {
 namespace codegen {
 
 class generator {
 
-   typedef std::map<std::string, std::function<llvm::Value *
-   (llvm::Value *, llvm::Value *)>> op_map_t;
+   typedef std::function<llvm::Value * (llvm::Value *, llvm::Value *)> bin_op_gen_t;
+
+   typedef std::map<std::string, bin_op_gen_t> op_map_t;
 
    llvm::LLVMContext &ctx;
    llvm::Module *cm;
@@ -42,7 +42,14 @@ class generator {
 
    llvm::Value *zero_constant;
 
+   /** Contains a mapping of built-in operators to opcode generators. */
    op_map_t op_map;
+
+   /** This points to the module currently being processed. */
+   parser::module_ptr_t current_module;
+
+   /** This points to the method currently being processed. */
+   parser::method_ptr_t current_method;
 
    auto
    constant_int(parser::ast_ptr_t i) -> llvm::Value * {
@@ -93,6 +100,8 @@ class generator {
 
    void
    method(parser::method_ptr_t m) {
+      current_method = m;
+
       auto method_type = llvm::FunctionType::get(llvm::Type::getInt64Ty(ctx),
                                                  std::vector<llvm::Type *>(),
                                                  false);
@@ -148,6 +157,7 @@ public:
          { "^",  BINOPGEN(Xor)  },
          { "<<", BINOPGEN(Shl)  },
          { ">>", BINOPGEN(LShr) },
+
          // Comparison
          { ">=", BINOPGEN(ICmpSGE) },
          { "<=", BINOPGEN(ICmpSLE) },
@@ -164,9 +174,7 @@ public:
    generate(parser::module_ptr_t m) {
       cm = new llvm::Module(m->get_name(), ctx);
 
-      //fpm = new llvm::FunctionPassManager(cm);
-      //fpm->add(new llvm::TargetData(*(ee->getTargetData())));
-      //fpm->doInitialization();
+      current_module = m;
 
       for (auto me : m->get_method_map()) {
          method(me.second);

@@ -22,10 +22,10 @@ typedef std::vector<module_ptr_t> module_list_t;
 
 class module {
    /** The name of the module. */
-   std::string name;
+   string name;
 
    /** The path to the module. */
-   std::string path;
+   string path;
 
    /** The list of methods internal to this module. */
    method_map_t methods;
@@ -40,7 +40,7 @@ class module {
    method_ptr_t current_method;
 
 public:
-   module(const std::string &_name) :
+   module(const string &_name) :
          name(_name) {
       add_method(method_ptr_t(new method("__default__")));
       push_current_method("__default__");

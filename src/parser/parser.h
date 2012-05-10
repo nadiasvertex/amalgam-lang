@@ -9,7 +9,7 @@
 #define PARSER_H_
 
 #include "rules.h"
-#include "module.h"
+#include "verifier.h"
 
 namespace amalgam {
 namespace parser {
@@ -26,6 +26,10 @@ public:
       pegtl::basic_parse_string < grammar > (s, t, m);
 
       m->dump();
+
+      verifier v;
+
+      v.verify(m);
 
       return m;
    }
