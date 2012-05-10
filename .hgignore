@@ -3,5 +3,6 @@ syntax: glob
 .pydevproject
 .sconsign.dblite
 amalgam
+amalgam-test
 *.o
 *.pyc
