@@ -84,6 +84,7 @@ struct sweep_expression_tree : action_base<sweep_expression_tree> {
       // We are at the end of the expression list specified in the file. We sweep
       // the contents of the top of the stack into the current method's expression
       // lists.
+
       if (t.size() > 0) {
          std::cout << "trace: parse stack:" << std::endl;
          for (auto n : t) {
