@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
         amalgam::parser::parser p;
 
-        auto module = p.parse(input);
+        auto module = p.parse(input, true);
 
         amalgam::codegen::generator g;
 

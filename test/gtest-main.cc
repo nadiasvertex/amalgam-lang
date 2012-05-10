@@ -31,6 +31,7 @@
 
 #include "gtest.h"
 #include "parser/test_module.h"
+#include "parser/test_parser.h"
 
 GTEST_API_ int main(int argc, char **argv) {
   std::cout << "Running main() from gtest-main.cc\n";

@@ -86,10 +86,10 @@ struct sweep_expression_tree : action_base<sweep_expression_tree> {
       // lists.
 
       if (t.size() > 0) {
-         std::cout << "trace: parse stack:" << std::endl;
+         /*std::cout << "trace: parse stack:" << std::endl;
          for (auto n : t) {
             std::cout << (int) (n->type) << ": " << n->data << std::endl;
-         }
+         }*/
 
          // sweep the stack recursively
          auto it = t.begin();
