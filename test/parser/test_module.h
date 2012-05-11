@@ -10,7 +10,7 @@
 
 #include "parser/module.h"
 
-TEST(ModuleTest, CanCreateModule) {
+TEST(ModuleTest, CanCreate) {
    ASSERT_NO_THROW(new amalgam::parser::module("test_module"));
 }
 

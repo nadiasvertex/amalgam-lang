@@ -32,6 +32,16 @@ struct push_integer : pad<
       ifapply<literal_integer, push_node<node_type::literal_int> >, space> {
 };
 
+struct identifier : seq< plus< sor<alpha, one<'_'> > >, star< sor<alnum, one<'_'> > >  > {
+};
+
+/** Matches an identifier, and if successful, pushes it on the expression stack. Also
+ * provides for space padding. */
+struct push_identifier : pad<
+      ifapply<identifier, push_node<node_type::identifier> >, space> {
+};
+
+
 struct expr;
 
 struct push_group : pad<
@@ -39,7 +49,7 @@ struct push_group : pad<
 
 /** An expression atom is one atomic unit of expression. This could be a single
  * literal, or a parenthetical expression. */
-struct expr_atom : sor<push_integer, push_group > {
+struct expr_atom : sor<push_integer, push_identifier, push_group > {
 };
 
 struct literal_op : plus< one<'+', '-', '*', '/', '&', '|', '^', '=', '<', '>', 

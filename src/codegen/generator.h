@@ -171,7 +171,7 @@ public:
    }
 
    void
-   generate(parser::module_ptr_t m) {
+   generate(parser::module_ptr_t m, bool verbose=false) {
       cm = new llvm::Module(m->get_name(), ctx);
 
       current_module = m;
@@ -180,7 +180,9 @@ public:
          method(me.second);
       }
 
-      cm->dump();
+      if (verbose) {
+         cm->dump();
+      }
    }
 
    void

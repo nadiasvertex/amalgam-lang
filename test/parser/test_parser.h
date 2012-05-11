@@ -46,7 +46,13 @@ TEST(ParserTest, IntegerAllOperatorExpression) {
    EXPECT_TRUE(m!=nullptr);
 }
 
+TEST(ParserTest, Identifier) {
+   amalgam::parser::parser p;
+   amalgam::parser::module_ptr_t m;
 
+   ASSERT_NO_THROW(m = p.parse("an_ident"));
+   EXPECT_TRUE(m!=nullptr);
+}
 
 
 #endif /* TEST_PARSER_H_ */

@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
         amalgam::codegen::generator g;
 
-        g.generate(module);
+        g.generate(module, true);
         g.run();
     }
     
