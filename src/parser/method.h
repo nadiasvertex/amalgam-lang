@@ -78,6 +78,11 @@ public:
       vars[name] = t;
    }
 
+   /** Looks for a variable declared in this method with the given name. */
+   bool has_variable(string name) {
+      return vars.find(name) != vars.end();
+   }
+
    //=====----------------------------------------------------------------------======//
    //      Parser Debugging and Instrumentation
    //=====----------------------------------------------------------------------======//

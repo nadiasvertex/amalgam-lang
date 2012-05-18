@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "types.h"
+#include "annotations.h"
 
 namespace amalgam {
 namespace parser {
@@ -46,6 +46,9 @@ struct ast {
 
     /** List of children (if any) */
     ast_list_t children;
+
+    /** Provides the semantic type of the node. Ie, int, string, etc. */
+    type_annotation::ptr_t semantic_type;
 };
 
 ast_ptr_t make_ast() {

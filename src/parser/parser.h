@@ -31,7 +31,9 @@ public:
 
       verifier v;
 
-      v.verify(m);
+      if (!v.verify(m, verbose)) {
+         return nullptr;
+      }
 
       return m;
    }

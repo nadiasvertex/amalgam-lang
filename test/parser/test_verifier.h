@@ -20,6 +20,7 @@ TEST(VerifierTest, Identifier) {
 
    ASSERT_NO_THROW(m = p.parse("an_ident := 5"));
    EXPECT_TRUE(m!=nullptr);
+   EXPECT_TRUE(m->get_method("__default__")->has_variable("an_ident"));
 }
 
 

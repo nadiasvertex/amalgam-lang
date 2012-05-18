@@ -52,7 +52,15 @@ struct type_annotation : public annotation {
     * of types.
     */
    enum class type_id {
-      integer, floating_point, string, astruct, tuple, dict, method, interface, generic
+      integer,
+      floating_point,
+      string,
+      astruct,
+      tuple,
+      dict,
+      method,
+      interface,
+      generic
    };
 
    /** The name of the type. */
@@ -79,6 +87,15 @@ struct type_annotation : public annotation {
             annotation(annotation_type::type), id(_id), is_constant(false), is_vector(false), is_array(false), size_in_elements(0) {
    }
    ;
+
+   bool
+   operator==(const type_annotation &o) {
+      return id == o.id
+             && is_constant == o.is_constant
+             && is_vector == o.is_vector
+             && is_array == o.is_array
+             && size_in_elements == o.size_in_elements;
+   }
 };
 
 struct numeric_type_annotation : public type_annotation {
@@ -88,10 +105,20 @@ struct numeric_type_annotation : public type_annotation {
    /** The length of this type in bits. */
    uint8_t size_in_bits;
 
+   /** The literal specifier for the number. */
+   std::string specifier;
+
    numeric_type_annotation(type_id _id) :
             is_signed(false), size_in_bits(0), type_annotation(_id) {
    }
    ;
+
+   bool
+   operator==(const numeric_type_annotation &o) {
+      return type_annotation::operator==(o)
+             && is_signed == o.is_signed
+             && size_in_bits == o.size_in_bits;
+   }
 };
 
 struct composite_type_annotation : public type_annotation {

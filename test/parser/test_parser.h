@@ -22,6 +22,30 @@ TEST(ParserTest, Integer) {
    EXPECT_TRUE(m!=nullptr);
 }
 
+TEST(ParserTest, HexInteger) {
+   amalgam::parser::parser p;
+   amalgam::parser::module_ptr_t m;
+
+   ASSERT_NO_THROW(m = p.parse("10h"));
+   EXPECT_TRUE(m!=nullptr);
+}
+
+TEST(ParserTest, OctInteger) {
+   amalgam::parser::parser p;
+   amalgam::parser::module_ptr_t m;
+
+   ASSERT_NO_THROW(m = p.parse("10o"));
+   EXPECT_TRUE(m!=nullptr);
+}
+
+TEST(ParserTest, BinaryInteger) {
+   amalgam::parser::parser p;
+   amalgam::parser::module_ptr_t m;
+
+   ASSERT_NO_THROW(m = p.parse("10b"));
+   EXPECT_TRUE(m!=nullptr);
+}
+
 TEST(ParserTest, IntegerExpression) {
    amalgam::parser::parser p;
    amalgam::parser::module_ptr_t m;
