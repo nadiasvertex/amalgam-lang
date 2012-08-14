@@ -11,16 +11,16 @@
 #include <map>
 #include <functional>
 
-#include "llvm/DerivedTypes.h"
-#include "llvm/ExecutionEngine/ExecutionEngine.h"
-#include "llvm/ExecutionEngine/JIT.h"
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
-#include "llvm/PassManager.h"
-#include "llvm/Analysis/Verifier.h"
-#include "llvm/Support/IRBuilder.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/Target/TargetData.h"
+#include <llvm/DerivedTypes.h>
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/JIT.h>
+#include <llvm/LLVMContext.h>
+#include <llvm/Module.h>
+#include <llvm/PassManager.h>
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/Support/IRBuilder.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Target/TargetData.h>
 
 #include "../parser/module.h"
 

@@ -47,7 +47,8 @@ template<node_type nt>
 
             case node_type::op:
                if (t.size() > 0 && t.back()->type == node_type::literal_int) {
-                  // If the top of the stack is a literal or identifier, swap places with it.
+                  // If the top of the stack is a literal or identifier, swap
+            	  // places with it.
                   auto top = t.back();
 
                   t.pop_back();
