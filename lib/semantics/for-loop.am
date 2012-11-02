@@ -1,0 +1,19 @@
+from container import container
+from iterator import iterator
+
+def for_processor(it, coll, body) -> bool:
+	 broke_out, result := body
+	 
+	 if broke_out:
+	    return false
+	 
+     it = it.next
+	 if it == coll.end:
+	 	return true
+	 	
+	 return for_processor(it, coll, body)	 	
+
+def for(it iterator) in(coll container) (body callable):
+	it := coll.begin
+	for_processor(it, coll, body)
+

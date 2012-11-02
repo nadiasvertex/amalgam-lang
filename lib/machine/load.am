@@ -1,0 +1,7 @@
+machine load(in) -> out:
+	out = load in
+	
+
+	
+
+	

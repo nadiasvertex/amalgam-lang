@@ -1,0 +1,20 @@
+# if statements
+statement <- if () (:) {elif () (:)}* else (:)
+statement <- if () (:) else (:)
+statement <- if () (:)
+
+# foreach loop
+statement <- for () in () if () (:)
+statement <- for () in () (:)
+
+# for counter loop
+statement <- for () from () upto   () by () (:)
+statement <- for () from () downto () by () (:)
+statement <- for () from () upto   () (:)
+statement <- for () from () downto () (:)
+
+# while loop
+statement <- while () (:)
+
+# do loop
+statement <- do (:) while ()

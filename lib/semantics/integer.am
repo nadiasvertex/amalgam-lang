@@ -1,0 +1,35 @@
+# Provides query results about various integer types
+# for use in template query statements.
+
+def is_bool(variable type) = false
+def is_bool(varaible bool) = true
+
+def is_integral(variable type) = false
+def is_integral(variable uint8) = true
+def is_integral(variable uint16) = true
+def is_integral(variable uint32) = true
+def is_integral(variable uint64) = true
+def is_integral(variable sint8) = true
+def is_integral(variable sint16) = true
+def is_integral(variable sint32) = true
+def is_integral(variable sint64) = true
+
+def is_signed(variable type) = false
+def is_signed(variable uint8) = false
+def is_signed(variable uint16) = false
+def is_signed(variable uint32) = false
+def is_signed(variable uint64) = false
+def is_signed(variable sint8) = true
+def is_signed(variable sint16) = true
+def is_signed(variable sint32) = true
+def is_signed(variable sint64) = true
+
+def is_unsigned(variable type) = false
+def is_unsigned(variable uint8) = true
+def is_unsigned(variable uint16) = true
+def is_unsigned(variable uint32) = true
+def is_unsigned(variable uint64) = true
+def is_unsigned(variable sint8) = false
+def is_unsigned(variable sint16) = false
+def is_unsigned(variable sint32) = false
+def is_unsigned(variable sint64) = false

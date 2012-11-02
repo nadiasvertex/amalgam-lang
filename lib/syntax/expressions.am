@@ -1,0 +1,17 @@
+# Standard ALU expressions
+expr <- () + () 
+expr <- () - () 
+expr <- () * () 
+expr <- () / () 
+expr <- () % () 
+expr <- () & () 
+expr <- () | ()
+expr <- () ^ ()
+
+# Standard logical instructions
+expr <- () and ()
+expr <- () or  ()
+
+# Standard comparison instructions
+expr <- () if  () else ()
+

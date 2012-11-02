@@ -1,0 +1,11 @@
+from integer import is_integral
+
+interface container(element_type type,
+                    iterator_type type = forward_iterator(element_type),
+					container_size_type type = uint64, 
+                    ) where is_integral(container_size_type):
+	size -> container_size
+	 
+
+
+

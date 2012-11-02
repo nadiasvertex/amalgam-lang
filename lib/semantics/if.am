@@ -1,0 +1,100 @@
+# If expression
+def (true_result callable) if (pred callable ()->bool else (false_result callable) -> (type):
+	# where same_return_type(true_result, false_result)
+	var result typeof(true_result) 
+	machine:
+		r0 = call pred
+		branch ret_false ifnot r0
+		branch ret_true
+		
+		ret_true:
+		r1 = call true_result
+		store r1 -> result
+		branch exit
+		
+		ret_false:
+		r2 = call false_result
+		store r2 -> result
+		branch exit
+		
+		exit:
+	
+	return result				
+
+
+# If statements
+def if(pred callable ()->bool) (body callable):
+	machine:
+		r0 = call pred
+		branch exit ifnot r0
+		
+		# Handle if body
+		r1 = call body
+		exit:
+		 
+def if(pred callable ()->bool) (if_body callable) else (else_body callable):
+	machine:
+		r0 = call pred
+		branch else_body ifnot r0
+		
+		# Handle if body
+		r1 = call if_body
+		branch exit
+		
+		# Handle else body
+		else_body:
+		r2 = call else_body if not r0
+		exit:
+		
+def if(pred callable ()->bool) (if_body callable) (elifs elif_suite) else (else_body callable):
+	machine:
+		r0 = call pred
+		branch elifs ifnot r0
+		
+		# Handle if body		
+		r1 = call if_body
+		branch exit
+		
+		# Handle elif chain
+		elifs:
+		r2 = call elifs
+		branch exit if r2
+		
+		# Handle else		
+		r3 = call else_body
+		exit:
+		
+type elif_suite def elif(preds [] callable ()-> bool) (elif_bodies [] callable):
+	result := false
+	index  := 0
+	length := len(preds)
+	
+	machine:		
+		check_pred:
+		r0 = load index
+		r1 = load preds[r0]		
+		# Handle predicate block
+		r2 = call r1
+		branch next ifnot r2
+		branch exec
+		
+		exec:
+		r7 = load elif_bodies[r0]
+		r8 = call r7
+		
+		next:
+		r3 = 1
+		r4 = r0 + r3
+		store r4 -> index
+		
+		r5 = load length
+		r6 = r4 < r5
+		branch check_pred if r6
+		branch exit
+		
+		exit:		
+		store r2 -> result
+		
+	return result
+
+		
